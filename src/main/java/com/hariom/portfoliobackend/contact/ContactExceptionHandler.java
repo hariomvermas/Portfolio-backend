@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -37,6 +38,17 @@ public class ContactExceptionHandler {
         body.put("status", 400);
         body.put("error", "Validation failed");
         body.put("fields", fields);
+        body.put("timestamp", Instant.now().toString());
+        return body;
+    }
+
+    /** Unknown path (e.g. GET / on this pure API) -> 404 JSON, not a 500. */
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, Object> handleNotFound(NoResourceFoundException ex) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("status", 404);
+        body.put("error", "No such endpoint. The API lives under /api — try /api/contact/health");
         body.put("timestamp", Instant.now().toString());
         return body;
     }

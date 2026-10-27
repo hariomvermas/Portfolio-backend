@@ -47,6 +47,19 @@ Five tests, deliberately DB-free: bean-validation rules and service save
 logic (Mockito + `ArgumentCaptor`), so `mvn test` runs anywhere without a
 database.
 
+## Live deployment (current)
+
+- **Backend:** https://portfolio-backend-cyqz.onrender.com (Render free
+  tier, Docker deploy from this repo — pushes to `main` auto-deploy)
+- **MySQL:** Aiven free plan (host/port/credentials live in Render's
+  environment variables only — never in this repo)
+- **Frontend wiring:** the portfolio repo's `vercel.json` rewrites
+  `/api/*` to the Render host, so the contact form calls same-origin URLs.
+
+Free-tier realities: Render sleeps after ~15 min idle (first request after
+a wake takes ~50 s — one retry may be needed); Aiven free plan is 1 vCPU /
+1 GB and pauses on heavy use.
+
 ## Deploy — Render (free) + Aiven MySQL (free)
 
 The `Dockerfile` builds a fat JAR and runs it on a JRE-only image; Render
